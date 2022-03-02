@@ -1,3 +1,10 @@
+# Must be installed
+
+Node - https://nodejs.org/en/download/
+Win  - https://nodejs.org/dist/v16.14.0/node-v16.14.0-x64.msi
+
+This will give you ### `npm ` functionality. 
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
