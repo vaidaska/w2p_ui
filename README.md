@@ -1,9 +1,13 @@
 # Must be installed
 
-Node - https://nodejs.org/en/download/
+Node - https://nodejs.org/en/download/ \
 Win  - https://nodejs.org/dist/v16.14.0/node-v16.14.0-x64.msi
 
-This will give you ### `npm ` functionality. 
+This will give you `npm ` functionality. 
+
+then go to root folder of the project (where package.json file is) and type
+
+`npm i` or `npm install` - to download all necessarry packages from npm.  
 
 # Getting Started with Create React App
 
