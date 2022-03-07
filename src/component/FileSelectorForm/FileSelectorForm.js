@@ -1,41 +1,79 @@
 import React, { useState } from "react";
-import api from "../../utils/axios";
-import { Container, Row, Col, Form, Button, ProgressBar, Alert } from "react-bootstrap";
+import { uploadFile, convertFile } from "../../utils/apiHandler";
+// import api from "../../utils/axiosClient";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  ProgressBar,
+  Alert,
+} from "react-bootstrap";
+import axios from "axios";
 
 const FileSelectorForm = () => {
   const [selectedFiles, setSelectedFiles] = useState();
   const [progress, setProgress] = useState();
-  const [error, setError] = useState()
+  const [error, setError] = useState();
+  const [success, setSuccess] = useState();
+  const [file, setFile] = useState();
+
+  const convertFiles = (file) => {
+    convertFile(file)
+      .then(response => {
+        console.log(JSON.stringify(response.data));
+      }).catch(error => {
+        console.log(JSON.stringify(error.response.data))
+      })
+  }
 
   const submitHandler = (event) => {
     event.preventDefault(); //prevent the form from submitting
-    let formData = new FormData();
+    const formData = new FormData();
 
     formData.append("file", selectedFiles[0]);
+
     //Clear the error message
-    setError("")
-    api.post("/upload", formData, {
+    setError("");
+
+    const config = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-      onUploadProgress: (data) => {
-        //Set the progress value to show the progress bar
-        setProgress(Math.round((100 * data.loaded) / data.total));
+      onUploadProgress: function(progressEvent) {
+        var percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        setProgress(percentCompleted);
+        console.log(percentCompleted);
       },
-    }).catch(error => {
-        //const code = error?.response?.data
-        const code = "";
-        switch (code) {
-          case "FILE_MISSING":
-            setError("Please select a file before uploading!")
-            break
-          default:
-            setError("Sorry! Something went wrong. Please try again later")
-            break
+    };
+
+    uploadFile(formData, config)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("Response: " + response.data.message);
+          setFile(response.data.fileName);
+          if (response.data.message !== "") {
+            setSuccess(response.data.message);
+          }
+
+          console.log("Response: " + JSON.stringify(response.data));
+        } else {
+          console.log("Response status: " + response.status);
+          console.log(error);
         }
+      })
+      .catch((err) => {
+        if (err.response.data.message !== "") {
+          setError(err.response.data.message);
+        }
+        console.log(err);
+        console.log("ERROR tate: " + error);
       });
   };
-
+ 
   return (
     <Container>
       <Row>
@@ -58,13 +96,31 @@ const FileSelectorForm = () => {
               />
             </Form.Group>
             <Form.Group>
-              <Button variant="secondary" type="submit">
+              <Button className="mt-3" variant="secondary" type="submit">
                 Įkelti
               </Button>
             </Form.Group>
-            {error && <Alert variant="danger">{error}</Alert>}
+            {error && (
+              <Alert className="mt-3" variant="danger">
+                {error}
+              </Alert>
+            )}
+            {success && (
+              <Alert className="mt-3" variant="success">
+                {success}
+              </Alert>
+            )}
+            {success && (
+              <Button variant="success" onClick={() => { convertFiles(file)  }}>
+                Convert
+              </Button>
+            )}
             {!error && progress && (
-              <ProgressBar now={progress} label={`${progress}%`} />
+              <ProgressBar
+                className="mt-3"
+                now={progress}
+                label={`${progress}%`}
+              />
             )}
           </Form>
         </Col>

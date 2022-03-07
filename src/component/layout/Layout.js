@@ -10,14 +10,13 @@ const HeaderLayout = () => {
 
 const ContentLayout = () => {
     return (
-        // <FileSelectorForm />
         <FileSelectorForm></FileSelectorForm>
     )
 }
 
 const FooterLayout = () => {
     return (
-        <Container className="text-center">Practice {new Date().getFullYear()}</Container>
+        <Container className="text-center">Praktika {new Date().getFullYear()}</Container>
     )
 }
 
