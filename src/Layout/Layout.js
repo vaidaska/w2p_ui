@@ -1,6 +1,6 @@
 import React from "react";
 import { Container } from "react-bootstrap";
-import FileSelectorForm from "../FileSelectorForm/FileSelectorForm";
+import FileSelector from "../component/FileSelector/FileSelector";
 
 const HeaderLayout = () => {
     return (
@@ -10,7 +10,7 @@ const HeaderLayout = () => {
 
 const ContentLayout = () => {
     return (
-        <FileSelectorForm></FileSelectorForm>
+        <FileSelector></FileSelector>
     )
 }
 
