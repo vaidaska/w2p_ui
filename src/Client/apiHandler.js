@@ -1,4 +1,3 @@
-import axios from "axios";
 import axiosClient from "./axiosClient";
 
 const getDocuemntList = () => {
@@ -9,14 +8,21 @@ const uploadFile = (data, config) => {
     return axiosClient.post('/upload', data, config);
 }
 
-const convertFile = (file) => {
-    const url = "/files/convert/" + file;
-    console.log("REQUEST URL: " + url);
-    //return axiosClient.post(url);
-    return axiosClient.post('/files/convert/', { params: { fileName: file } });
+const deleteFile = (file) => {
+    const url = "/files/delete/" + file.name;
+    console.log("URL: " + url);
+    return axiosClient.delete(url);
 }
 
-export { getDocuemntList, uploadFile, convertFile };
+
+const convertFile = (file) => {
+    // const url = "/files/convert?fileName="+ file.name;
+    // console.log("REQUEST URL: " + url);
+    //return axiosClient.post(url);
+    return axiosClient.post('/files/convert/', null, { params: { fileName: file.name } });
+}
+
+export { getDocuemntList, uploadFile, convertFile, deleteFile };
 
 
     // api.post("/upload", formData, {
