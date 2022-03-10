@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { Container, Button, Form, Alert, ProgressBar, Table, Spinner } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Container, Button, Form, Alert, ProgressBar, Table, Spinner, Collapse, Card } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { isFileDocumentAllowed, convertSizeToMB, resetInputField, MAX_MB } from "../../Utilities/Utilities";
 import { uploadFile, convertFile, deleteFile } from "../../Client/apiHandler";
+import { isConstructorDeclaration } from "typescript";
 
 const FileSelector = () => {
 
     const [error, setError] = useState();
+    const [errors, setErrors] = useState();
     const [url, setUrl] = useState();
     const [success, setSuccess] = useState();
     const [step, setStep] = useState(0);
@@ -82,6 +84,7 @@ const FileSelector = () => {
                 setSuccess(response.data.message);
                 setIsTableVisible(true);
                 setIsFileDeleted(false);
+                setIsDownloadUrlVisible(false);
               } else {
                 console.log("Response status: " + response.status);
                 //console.log(error);
@@ -170,8 +173,15 @@ const FileSelector = () => {
             // if (isDownloadUrlVisible){
             //   setIsDownloadUrlVisible(false);
             // }
-
             setIsFileValid(true);
+            console.log(response.data);
+            setErrors(response.data[0].message);
+            // if (errors.legth > 0) {
+            //   getErrorMesages()
+            // }
+            // for (let i = 0; response.data[0].message.length; i++) {
+            //   setErrors(response.data[0].message[i]);
+            // }
           }
         }
 
@@ -180,7 +190,7 @@ const FileSelector = () => {
         console.log(response.data[0]);
         //console.log(response.data.convertedToPdf);
       }).catch(error => {
-        console.log(JSON.stringify(error.response.data))
+        console.log(JSON.stringify(error.response))
       }).finally( () => {
         setIsSpinnerVisible(false);
         //TEST
@@ -188,6 +198,27 @@ const FileSelector = () => {
       })
 
     }
+
+    const getErrorMesages = () => {
+      
+      //console.log(errors);
+      
+      // var message = "";
+      // for (let i = 0; i < errors.length; i++) {
+      //   console.log(errors[i]);
+      //   message.concat =  errors[i];
+      // }
+      // return message;
+    }
+
+    const popupHandler = () => {
+      return true;
+      //console.log("show error popup");
+    }
+
+    useEffect(() => {
+      getErrorMesages();
+    });
 
 
     return (
@@ -197,6 +228,11 @@ const FileSelector = () => {
                     <Container><strong>Reikalavimai:</strong></Container>
                     <Container>Leidžiami failų formatai: *.docx, *.doc</Container>
                     <Container>Maksimalus leidžiamas failo dydis: {MAX_MB} MB </Container>
+                    <Container className="mt-3"><strong>ToDo: </strong></Container>
+                    <Container>Klaida! - pranešimų formatavimas </Container>
+                    <Container>Suskaldyti į komponentus </Container>
+                    <Container>Multi failų f-mas </Container>
+                    <Container>Ištrinti esamą failą ? Arba patikrinti prieš uploadinant ar toks failas jau yra serveryje įkeltas </Container>
                 </Alert>
                 {error && <Alert className="d-flex flex-row justify-content-between" variant="danger">{error}<span><Button variant="danger" onClick={errorHandler}>Išvalyti</Button></span></Alert>}
                 {success && <Alert className="d-flex flex-row justify-content-between" variant="success">{success}<span><Button variant="success" onClick={successHandler}>Uždaryti</Button></span></Alert>}
@@ -225,7 +261,25 @@ const FileSelector = () => {
                     {isSpinnerVisible && <td className="text-center"><Spinner animation="border" variant="primary"><span className="visually-hidden">Loading...</span></Spinner></td>}
                     {isFileDeleted && <td className="text-center text-muted">Filas buvo ištrintas</td>}
                     {isDownloadUrlVisible && <td className="text-center"><a href={url}>Atsisiųsti</a></td>}
-                    {isFileValid && <td className="text-center text-warning">Klaida!</td>}
+                    {isFileValid && <><td className="text-center"><a className="text-warning" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Klaida!</a> 
+                    {/* <div style={{minHeight: '150px'}}>
+                      <Collapse in={popupHandler || false} dimension="width">
+                        <div id="example-collapse-text">
+                          <Card body>
+                              {errors}
+                          </Card>
+                        </div>
+                      </Collapse>
+                    </div> */}
+                    <div className="collapse multi-collapse" id="multiCollapseExample1">
+                      <div className="card card-body">
+                        {
+                          //getErrorMesages()
+                          errors
+                        }
+                      </div>
+                    </div>
+                  </td></>}
                   </tr>
                 </tbody>
               </Table>
