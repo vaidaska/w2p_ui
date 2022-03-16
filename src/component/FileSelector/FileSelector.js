@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Container, Button, Form, Alert, ProgressBar, Table, Spinner, Collapse, Card } from "react-bootstrap";
+import { Container, Button, Form, Alert, ProgressBar, Table, Spinner} from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { isFileDocumentAllowed, convertSizeToMB, resetInputField, MAX_MB } from "../../Utilities/Utilities";
 import { uploadFile, convertFile, deleteFile } from "../../Client/apiHandler";
-import { isConstructorDeclaration } from "typescript";
 
 const FileSelector = () => {
 
@@ -78,6 +77,16 @@ const FileSelector = () => {
           if (selectedFiles[0]) {
             uploadFile(formData, config)
             .then((response) => {
+
+              // console.log("PROMISE RESPONSE: ");
+              // console.log(JSON.stringify(response));
+
+              if (response.status === 404) {
+                console.log("ERROR 404: " + response.data.message);
+                console.log("Response: " + JSON.stringify(response.data));
+                
+              }
+
               if (response.status === 200) {
                 console.log("Response: " + response.data.message);
                 console.log("Response: " + JSON.stringify(response.data));
@@ -91,12 +100,21 @@ const FileSelector = () => {
               }
             })
             .catch((err) => {
-              if (err.response.data.message !== "") {
-                if (err.code === 417 ) {
-                  setError("Užklausa neįvykdyta. Klaidos kodas 500");  
-                }
-                setError(err.message);
+
+              if (err.response.status === 406 ) {
+                setError("Toks failas jau egzistuoja. serverio atsakas: " + err.response.data.message);
+                console.log(err.response.data.message);  
+                return;
               }
+
+              if (err.response.status === 500 ) {
+                setError("Įsijunk serverį, programuotojau :).");
+                //console.log(err.response.data.message);  
+                return;
+              }
+
+              setError(err.response.data.message);
+
             });
         }
     }
