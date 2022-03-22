@@ -19,5 +19,8 @@ const deleteFile = (file) => {
 const convertFile = (file) => {
     return axiosClient.post('/files/convert/', null, { params: { fileName: file } });
 }
+const convertFiles = () => {
+    return axiosClient.post('/files/convert/');
+}
 
-export { getDocuemntList, uploadFile, convertFile, deleteFile };
+export { getDocuemntList, uploadFile, convertFile, convertFiles, deleteFile };

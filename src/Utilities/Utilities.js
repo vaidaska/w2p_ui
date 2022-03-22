@@ -27,4 +27,4 @@ const resetInputField = () => {
 //key={inputKey || ''}
 
 
-export { convertSizeToMB, isFileDocumentAllowed, resetInputField, MAX_MB };
+export { convertSizeToMB, isFileDocumentAllowed, resetInputField, DOC, MSDOC, MSWORD, DOCX, MAX_MB };
